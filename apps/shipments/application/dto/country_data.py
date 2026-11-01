@@ -1,0 +1,8 @@
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True, kw_only=True)
+class CountryDataDTO:
+    code: str
+    name: str
+    currency: str

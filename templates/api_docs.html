@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GoCargo · Documentación API</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; }
+      .docs-header { display: flex; align-items: center; justify-content: space-between;
+        gap: 16px; padding: 16px 24px; background: #0f172a; color: #fff; }
+      .docs-header a { color: #cbd5e1; font-size: 14px; }
+      #loading { padding: 16px 24px; }
+      #api-reference { min-height: calc(100vh - 56px); }
+    </style>
+  </head>
+  <body>
+    <header class="docs-header">
+      <strong>GoCargo API</strong>
+      <a href="{{ schema_url }}">OpenAPI JSON</a>
+    </header>
+    <p id="loading" role="status">Cargando documentación interactiva…</p>
+    <div id="api-reference"></div>
+    <noscript>Activa JavaScript para ver Scalar o abre el enlace OpenAPI JSON.</noscript>
+    {{ schema_url|json_script:"schema-url" }}
+    <script type="module">
+      try {
+        const { createApiReference } = await import(
+          'https://cdn.jsdelivr.net/npm/@scalar/api-reference/esm.js'
+        );
+        createApiReference('#api-reference', {
+          url: JSON.parse(document.getElementById('schema-url').textContent),
+          proxyUrl: '',
+        });
+        document.getElementById('loading').remove();
+      } catch (error) {
+        document.getElementById('loading').textContent =
+          'No se pudo cargar Scalar. Comprueba tu conexión al CDN o abre OpenAPI JSON.';
+      }
+    </script>
+  </body>
+</html>

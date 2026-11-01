@@ -1,0 +1,667 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "GoCargo API",
+    "version": "1.0.0",
+    "description": "Demo log?stica con sucursales y env?os internacionales. Acceso an?nimo para desarrollo local. Crea una sucursal antes de registrar un env?o. Las operaciones de prueba escriben en tu base local."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Servidor actual"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Sucursales",
+      "description": "Crear, listar y actualizar sucursales."
+    },
+    {
+      "name": "Env?os",
+      "description": "Crear env?os y consultar sus datos hist?ricos."
+    }
+  ],
+  "paths": {
+    "/api/branches/": {
+      "get": {
+        "operationId": "listBranches",
+        "tags": [
+          "Sucursales"
+        ],
+        "summary": "Listar sucursales",
+        "responses": {
+          "200": {
+            "description": "Operaci?n correcta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Branch"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "description": "Devuelve una lista JSON sin paginaci?n, ordenada por nombre y UUID."
+      },
+      "post": {
+        "operationId": "createBranch",
+        "tags": [
+          "Sucursales"
+        ],
+        "summary": "Crear sucursal",
+        "responses": {
+          "201": {
+            "description": "Registro creado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Branch"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBranchRequest"
+              },
+              "example": {
+                "name": "Sucursal Managua",
+                "city": "Managua",
+                "max_weight_kg": "25.00",
+                "is_active": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/branches/{branch_id}/": {
+      "put": {
+        "operationId": "updateBranch",
+        "tags": [
+          "Sucursales"
+        ],
+        "summary": "Actualizar sucursal completa",
+        "responses": {
+          "200": {
+            "description": "Operaci?n correcta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Branch"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "description": "Env?a los cuatro campos editables. Conserva el UUID y los datos hist?ricos de env?os ya creados.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBranchRequest"
+              },
+              "example": {
+                "name": "Sucursal Managua",
+                "city": "Managua",
+                "max_weight_kg": "25.00",
+                "is_active": true
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "branch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "UUID de una sucursal existente."
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "patchBranch",
+        "tags": [
+          "Sucursales"
+        ],
+        "summary": "Actualizar campos de sucursal",
+        "responses": {
+          "200": {
+            "description": "Operaci?n correcta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Branch"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "description": "Env?a al menos un campo. Conserva los omitidos; rechaza null y campos desconocidos.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchBranchRequest"
+              },
+              "example": {
+                "city": "Leon",
+                "is_active": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "branch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "UUID de una sucursal existente."
+          }
+        ]
+      }
+    },
+    "/api/shipments/": {
+      "get": {
+        "operationId": "listShipments",
+        "tags": [
+          "Env?os"
+        ],
+        "summary": "Listar env?os",
+        "responses": {
+          "200": {
+            "description": "Operaci?n correcta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Shipment"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "description": "Consulta local sin GraphQL. Devuelve una lista JSON sin paginaci?n, ordenada por UUID."
+      },
+      "post": {
+        "operationId": "createShipment",
+        "tags": [
+          "Env?os"
+        ],
+        "summary": "Crear env?o internacional",
+        "responses": {
+          "201": {
+            "description": "Registro creado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shipment"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "description": "Primero crea una sucursal y sustituye origin_branch_id por su UUID. Verifica peso, capacidad, estado y pa?s antes de guardar.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShipmentRequest"
+              },
+              "example": {
+                "origin_branch_id": "0f0ebf04-bd30-4d27-a797-d49c8f35a480",
+                "description": "Documentos",
+                "weight_kg": "2.50",
+                "destination_country_code": "CR"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shipments/{shipment_id}/": {
+      "get": {
+        "operationId": "getShipment",
+        "tags": [
+          "Env?os"
+        ],
+        "summary": "Consultar env?o por UUID",
+        "responses": {
+          "200": {
+            "description": "Operaci?n correcta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shipment"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "description": "Devuelve la instant?nea guardada; no consulta el cat?logo ni exige que la sucursal siga activa.",
+        "parameters": [
+          {
+            "name": "shipment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "UUID de un env?o existente."
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateBranchRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "city",
+          "max_weight_kg"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Sucursal Managua"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "example": "Managua"
+          },
+          "max_weight_kg": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "decimal",
+                "pattern": "^-?\\d+(\\.\\d{1,2})?$",
+                "example": "2.50"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Capacidad positiva por paquete; hasta 999999.99 kg."
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "UpdateBranchRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "city",
+          "max_weight_kg",
+          "is_active"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Sucursal Managua"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "example": "Managua"
+          },
+          "max_weight_kg": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "decimal",
+                "pattern": "^-?\\d+(\\.\\d{1,2})?$",
+                "example": "2.50"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Capacidad positiva por paquete; hasta 999999.99 kg."
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PatchBranchRequest": {
+        "type": "object",
+        "minProperties": 1,
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Sucursal Managua"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "example": "Managua"
+          },
+          "max_weight_kg": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "decimal",
+                "pattern": "^-?\\d+(\\.\\d{1,2})?$",
+                "example": "2.50"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Capacidad positiva por paquete; hasta 999999.99 kg."
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Branch": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "city",
+          "max_weight_kg",
+          "is_active"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Sucursal Managua"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "example": "Managua"
+          },
+          "max_weight_kg": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d+(\\.\\d{1,2})?$",
+            "example": "25.00"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateShipmentRequest": {
+        "type": "object",
+        "required": [
+          "origin_branch_id",
+          "description",
+          "weight_kg",
+          "destination_country_code"
+        ],
+        "properties": {
+          "origin_branch_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "example": "Documentos"
+          },
+          "weight_kg": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "decimal",
+                "pattern": "^-?\\d+(\\.\\d{1,2})?$",
+                "example": "2.50"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Peso mayor que cero y hasta 50 kg, limitado adem?s por la sucursal."
+          },
+          "destination_country_code": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{2}$",
+            "example": "CR"
+          }
+        }
+      },
+      "Shipment": {
+        "type": "object",
+        "required": [
+          "id",
+          "origin_branch_id",
+          "origin_branch_name",
+          "description",
+          "weight_kg",
+          "destination_country_code",
+          "destination_country_name",
+          "currency",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "origin_branch_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "origin_branch_name": {
+            "type": "string",
+            "description": "Nombre hist?rico de la sucursal al crear el env?o."
+          },
+          "description": {
+            "type": "string"
+          },
+          "weight_kg": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d+(\\.\\d{1,2})?$",
+            "example": "2.50"
+          },
+          "destination_country_code": {
+            "type": "string",
+            "example": "CR"
+          },
+          "destination_country_name": {
+            "type": "string",
+            "example": "Costa Rica"
+          },
+          "currency": {
+            "type": "string",
+            "example": "CRC"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED"
+            ]
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "detail"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "errors": {}
+        }
+      }
+    },
+    "responses": {
+      "Error400": {
+        "description": "Formato, campos o cuerpo de solicitud inv?lidos.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error404": {
+        "description": "Sucursal, env?o o pa?s no encontrado.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error409": {
+        "description": "Conflicto con una restricci?n de persistencia.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error422": {
+        "description": "Regla de negocio incumplida: peso, capacidad o estado inv?lidos.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error503": {
+        "description": "Persistencia o cat?logo de pa?ses no disponible.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}
