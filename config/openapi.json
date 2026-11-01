@@ -3,7 +3,7 @@
   "info": {
     "title": "GoCargo API",
     "version": "1.0.0",
-    "description": "Demo log?stica con sucursales y env?os internacionales. Acceso an?nimo para desarrollo local. Crea una sucursal antes de registrar un env?o. Las operaciones de prueba escriben en tu base local."
+    "description": "Demo logística con sucursales y envíos internacionales. Acceso anónimo para desarrollo local. Crea una sucursal antes de registrar un envío. Las operaciones de prueba escriben en tu base local."
   },
   "servers": [
     {
@@ -17,8 +17,8 @@
       "description": "Crear, listar y actualizar sucursales."
     },
     {
-      "name": "Env?os",
-      "description": "Crear env?os y consultar sus datos hist?ricos."
+      "name": "Envíos",
+      "description": "Crear envíos y consultar sus datos históricos."
     }
   ],
   "paths": {
@@ -31,7 +31,7 @@
         "summary": "Listar sucursales",
         "responses": {
           "200": {
-            "description": "Operaci?n correcta.",
+            "description": "Operación correcta.",
             "content": {
               "application/json": {
                 "schema": {
@@ -47,7 +47,7 @@
             "$ref": "#/components/responses/Error503"
           }
         },
-        "description": "Devuelve una lista JSON sin paginaci?n, ordenada por nombre y UUID."
+        "description": "Devuelve una lista JSON sin paginación, ordenada por nombre y UUID."
       },
       "post": {
         "operationId": "createBranch",
@@ -106,7 +106,7 @@
         "summary": "Actualizar sucursal completa",
         "responses": {
           "200": {
-            "description": "Operaci?n correcta.",
+            "description": "Operación correcta.",
             "content": {
               "application/json": {
                 "schema": {
@@ -131,7 +131,7 @@
             "$ref": "#/components/responses/Error503"
           }
         },
-        "description": "Env?a los cuatro campos editables. Conserva el UUID y los datos hist?ricos de env?os ya creados.",
+        "description": "Envía los cuatro campos editables. Conserva el UUID y los datos históricos de envíos ya creados.",
         "requestBody": {
           "required": true,
           "content": {
@@ -169,7 +169,7 @@
         "summary": "Actualizar campos de sucursal",
         "responses": {
           "200": {
-            "description": "Operaci?n correcta.",
+            "description": "Operación correcta.",
             "content": {
               "application/json": {
                 "schema": {
@@ -194,7 +194,7 @@
             "$ref": "#/components/responses/Error503"
           }
         },
-        "description": "Env?a al menos un campo. Conserva los omitidos; rechaza null y campos desconocidos.",
+        "description": "Envía al menos un campo. Conserva los omitidos; rechaza null y campos desconocidos.",
         "requestBody": {
           "required": true,
           "content": {
@@ -227,12 +227,12 @@
       "get": {
         "operationId": "listShipments",
         "tags": [
-          "Env?os"
+          "Envíos"
         ],
-        "summary": "Listar env?os",
+        "summary": "Listar envíos",
         "responses": {
           "200": {
-            "description": "Operaci?n correcta.",
+            "description": "Operación correcta.",
             "content": {
               "application/json": {
                 "schema": {
@@ -248,14 +248,14 @@
             "$ref": "#/components/responses/Error503"
           }
         },
-        "description": "Consulta local sin GraphQL. Devuelve una lista JSON sin paginaci?n, ordenada por UUID."
+        "description": "Consulta local sin GraphQL. Devuelve una lista JSON sin paginación, ordenada por UUID."
       },
       "post": {
         "operationId": "createShipment",
         "tags": [
-          "Env?os"
+          "Envíos"
         ],
-        "summary": "Crear env?o internacional",
+        "summary": "Crear envío internacional",
         "responses": {
           "201": {
             "description": "Registro creado.",
@@ -283,7 +283,7 @@
             "$ref": "#/components/responses/Error503"
           }
         },
-        "description": "Primero crea una sucursal y sustituye origin_branch_id por su UUID. Verifica peso, capacidad, estado y pa?s antes de guardar.",
+        "description": "Primero crea una sucursal y sustituye origin_branch_id por su UUID. Verifica peso, capacidad, estado y país antes de guardar.",
         "requestBody": {
           "required": true,
           "content": {
@@ -306,12 +306,12 @@
       "get": {
         "operationId": "getShipment",
         "tags": [
-          "Env?os"
+          "Envíos"
         ],
-        "summary": "Consultar env?o por UUID",
+        "summary": "Consultar envío por UUID",
         "responses": {
           "200": {
-            "description": "Operaci?n correcta.",
+            "description": "Operación correcta.",
             "content": {
               "application/json": {
                 "schema": {
@@ -327,7 +327,7 @@
             "$ref": "#/components/responses/Error503"
           }
         },
-        "description": "Devuelve la instant?nea guardada; no consulta el cat?logo ni exige que la sucursal siga activa.",
+        "description": "Devuelve la instantánea guardada; no consulta el catálogo ni exige que la sucursal siga activa.",
         "parameters": [
           {
             "name": "shipment_id",
@@ -337,7 +337,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "UUID de un env?o existente."
+            "description": "UUID de un envío existente."
           }
         ]
       }
@@ -530,7 +530,7 @@
                 "type": "number"
               }
             ],
-            "description": "Peso mayor que cero y hasta 50 kg, limitado adem?s por la sucursal."
+            "description": "Peso mayor que cero y hasta 50 kg, limitado además por la sucursal."
           },
           "destination_country_code": {
             "type": "string",
@@ -563,7 +563,7 @@
           },
           "origin_branch_name": {
             "type": "string",
-            "description": "Nombre hist?rico de la sucursal al crear el env?o."
+            "description": "Nombre histórico de la sucursal al crear el envío."
           },
           "description": {
             "type": "string"
@@ -613,7 +613,7 @@
     },
     "responses": {
       "Error400": {
-        "description": "Formato, campos o cuerpo de solicitud inv?lidos.",
+        "description": "Formato, campos o cuerpo de solicitud inválidos.",
         "content": {
           "application/json": {
             "schema": {
@@ -623,7 +623,7 @@
         }
       },
       "Error404": {
-        "description": "Sucursal, env?o o pa?s no encontrado.",
+        "description": "Sucursal, envío o país no encontrado.",
         "content": {
           "application/json": {
             "schema": {
@@ -633,7 +633,7 @@
         }
       },
       "Error409": {
-        "description": "Conflicto con una restricci?n de persistencia.",
+        "description": "Conflicto con una restricción de persistencia.",
         "content": {
           "application/json": {
             "schema": {
@@ -643,7 +643,7 @@
         }
       },
       "Error422": {
-        "description": "Regla de negocio incumplida: peso, capacidad o estado inv?lidos.",
+        "description": "Regla de negocio incumplida: peso, capacidad o estado inválidos.",
         "content": {
           "application/json": {
             "schema": {
@@ -653,7 +653,7 @@
         }
       },
       "Error503": {
-        "description": "Persistencia o cat?logo de pa?ses no disponible.",
+        "description": "Persistencia o catálogo de países no disponible.",
         "content": {
           "application/json": {
             "schema": {
